@@ -1,0 +1,36 @@
+ADD A DB
+
+1. Import Nuget for entity framework
+2. Create Context class and inherit from DbContext
+3. Add DbSets
+4. Add the connection string to the appsettings(.development).json
+    eg.     "ConnectionStrings": {
+                "DefaultConnection" : "Data source=dbname.db"
+            }
+5. For dotnet 5.0.0, add the Context to the Startup.cs:
+
+    a) Refactor the IConfiguration field as private readonly
+    b) Add the Context to the Services configuration passing in the options the connection string
+        e.g         services.AddDbContext<DataContext>(options =>
+                    {
+                        options.UseSqlite(ConfigField.GetConnectionString("DefaultConnection"));
+                    });
+6. Install ef tools depending on version
+7. Create migration
+    eg. dotnet ef migrations add <MigrationName> -o <FolderAddress>
+8. Create db : dotnet ef database update
+
+
+API CONTROLLERS
+1. Add new controller and inherit from ControllerBase (controllers without views)
+2. Add attributes:
+    [ApiController]
+    [Route("routePrefix/[controller]")]         (The [controller] specifies that the route will 
+                                                take the controller's name inside the square brackets)
+3. Add a constructor with the DataContext injected
+        eg.     private readonly DataContext Context;
+                public UsersController(DataContext context)
+                {
+                    Context = context;
+                }
+4. Add the API endpoints similar to ASP.NET MVC
