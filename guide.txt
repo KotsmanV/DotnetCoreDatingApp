@@ -81,15 +81,7 @@ https://docs.microsoft.com/en-us/aspnet/web-api/overview/formats-and-model-bindi
 
 
 
-ANGULAR HTTP REQUESTS
-1. app.module > import HttpClientModule from angular/common/http
-2. app.component
-    a) inject the HttpClient as a constructor parameter
-    b) inherit/implement OnInit
-    c) use the relevant method/api verb from the httpClient inside a function or in ngOnInit()
-            i.  the response should be assigned to something in order to be used by other components etc
-            ii. do something with the error
-            iii.complete is optional
+
 
 
 IMPLEMENTING CORS
@@ -154,6 +146,56 @@ eg.             services.AddAuthentication(JwtBearerDefaults.AuthenticationSchem
 
 
 2. Specify on the controllers if authentication is needed
+
+
+
+ANGULAR HTTP REQUESTS
+1. app.module > import HttpClientModule from angular/common/http
+2. app.component
+    a) inject the HttpClient as a constructor parameter
+    b) inherit/implement OnInit
+    c) use the relevant method/api verb from the httpClient inside a function or in ngOnInit()
+            i.  the response should be assigned to something in order to be used by other components etc
+            ii. do something with the error
+            iii.complete is optional
+
+Services
+1. import HttpClientModule from angular/common/http
+2. inject in the constructor the HttpClient
+3. specify the url
+4. specify which will the request body be
+5. create a function where the relevant API verb should be used
+6. inject the service in a component constructor
+7. use any functions and subscribe to the observable (response, error, etc)
+
+
+eg.     export class AccountService {
+            baseUrl = 'https://localhost:5001/api/';
+
+            constructor(private Http: HttpClient) { }
+
+            login(model:any){
+                return this.Http.post(this.baseUrl + 'account/login', model);
+            }
+        }
+
+
+ANGULAR TEMPLATE REFERENCE VARIABLES
+Declared a template variable with a # and specify inside "" of what type it is if needed. 
+Template variables can be used inside the template to refer to the element on which they are declared.
+
+https://angular.io/guide/template-reference-variables
+
+ANGULAR FORMS
+- Declare a form by using ngForm as a template variable type specification.
+- (ngSubmit): assign the function to be called on this event.
+- [NgModel]: Creates a FormControl instance from a domain model and binds it to a form control element.
+
+
+ANGULAR SERVICES
+- Singleton
+- @Injectable : can be used/injected into other components
+- providedIn: 'root' : declares that the service is available in the app.module
 
 
 
