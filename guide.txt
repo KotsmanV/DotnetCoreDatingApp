@@ -34,3 +34,36 @@ API CONTROLLERS
                     Context = context;
                 }
 4. Add the API endpoints similar to ASP.NET MVC
+
+
+
+ANGULAR HTTP REQUESTS
+1. app.module > import HttpClientModule from angular/common/http
+2. app.component
+    a) inject the HttpClient as a constructor parameter
+    b) inherit/implement OnInit
+    c) use the relevant method/api verb from the httpClient inside a function or in ngOnInit()
+            i.  the response should be assigned to something in order to be used by other components etc
+            ii. do something with the error
+            iii.complete is optional
+
+
+IMPLEMENTING CORS
+Startup.cs
+1) ConfigureServices: add CORS
+2) Configure:   a) add CORS between Routing and Authorization. Order is important in this case.
+                b) add a policy.     AllowAnyMethod()
+                                     AllowAnyHeader()
+                                     WithOrigins(): specify the client url that will request the data
+
+SSL CERTIFICATES
+dotnet core: CLI dotnet dev-certs https --trust or --clean and then --trust
+angular:    a) copy certificate in a folder inside the app
+            b) add the options to angular.json > serve
+                eg  "options": {
+                        "sslKey": "./ssl/server.key",
+                        "sslCert": "./ssl/server.crt",
+                        "ssl": true,
+                        "browserTarget": "test:build"
+                    }
+            
