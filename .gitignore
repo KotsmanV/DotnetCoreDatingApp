@@ -4,6 +4,7 @@
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
 ssl
+StudentAssets
 
 # User-specific files
 *.rsuser
@@ -456,3 +457,4 @@ $RECYCLE.BIN/
 !.vscode/extensions.json
 
 appsettings.json
+StudentAssets.zip

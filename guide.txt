@@ -1,3 +1,32 @@
+SLI Commands
+
+Prefix: dotnet
+
+-h after each command opens up help
+new <templateName> -o <folderName>          -o specifies an output folder, else it will be created on the selected opens
+run : obvious
+watch run: is alert for any file changes
+
+
+Startup.cs
+    - ConfigureServices : The dependency injector. We add classes/services here and the method takes care of them(creation, destruction etc)
+    - Configure:  contains settings for the HTTP request pipeline
+launchSettings.json : contains the obvious
+
+
+ADDING SERVICES
+Startup.cs > ConfigureServices > 
+services.Add() with a generic declaration
+or
+services.AddSpecificService(options)
+Specify in options with a lambda expression what they're going to be.
+
+SERVICE TYPES
+1. Singleton: When created, it ends when the application ends or is explicitly told to do something.
+2. Transient: Starts when the method is called and end when it ends.
+3. Scoped: It exists as long as the Http request and is disposed when the request ends.
+
+
 ADD A DB
 
 1. Import Nuget for entity framework
@@ -23,17 +52,32 @@ ADD A DB
 
 API CONTROLLERS
 1. Add new controller and inherit from ControllerBase (controllers without views)
+    or
+   Create a new class with all the necessary properties and decorators that all the controllers will inherit from.
+
 2. Add attributes:
     [ApiController]
     [Route("routePrefix/[controller]")]         (The [controller] specifies that the route will 
                                                 take the controller's name inside the square brackets)
+
 3. Add a constructor with the DataContext injected
         eg.     private readonly DataContext Context;
                 public UsersController(DataContext context)
                 {
                     Context = context;
                 }
-4. Add the API endpoints similar to ASP.NET MVC
+
+4. Create the action methods as needed. Best to be asynchronous if calling the db
+        Add attributes for API verbs along with the route eg. [HttpPost("methodNameAsRoute")]
+
+5. If the controllers are for API, it's best to use DTOs
+
+
+The ApiController class specifies that any parameter in a API verb method 
+will be bound to a parallel one from the request url, if it is a "simple" one. Else, we can assign specifically
+from where will the value come. [FromBody] etc
+
+https://docs.microsoft.com/en-us/aspnet/web-api/overview/formats-and-model-binding/parameter-binding-in-aspnet-web-api
 
 
 
@@ -66,4 +110,51 @@ angular:    a) copy certificate in a folder inside the app
                         "ssl": true,
                         "browserTarget": "test:build"
                     }
+
+API TOKENS
+1. Best practice is to create an Interface
+2. Create a class that inherits from the Interface
+3. Add Nuget System.IdentityModel.Tokens.Jwt
+4. Create a:        private readonly SymmetricSecurityKey key
+5. Add a controller injected with IConfiguration and assign the key to a SymmetricSecurityKey
+    with Encoding.UTF8.GetBytes(config["TokenKey"]). This will get the key that the user
+    adds in the request.
+6. In the CreateToken method:
+    a. add as the parameter from which the credentials will be generated.
+    b. create a list of claims that will be created from the parameter
+    c. create the signing credentials with the key and an algorithm
+    d. create a token descriptor with:
+        i.      subject: ClaimsIdentity(claims)
+        ii.     expiration
+        iii.    SigningCredentials
+    e. create the token with a JwtSecurityTokenHandler
+    f. return the token by writing it with the Token Handler
+7. Create a DTO to be returned from the API, which will contain the relevant data along with the token
+8. Inject the Token servics to any controller that needs it and assign the token to a field
+9. Return from the action methods the relevant DTOs
+10.Add the token key to the appsettings.(Development).json. Never upload it in production environment.
+11. Add the service to the Startup.cs
+
+TOKEN AUTHENTICATION
+1. Add the Nuget Microsoft.AspNetCore.Authentication.JwtBearer
+2. Startup.cs > a. Add the authentication service
+eg.             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Config["TokenKey"])),
+                        ValidateIssuer = false,
+                        ValidateAudience = false
+                    };
+                });
+
+                b. Configure > Add the UseAuthentication after CORS and before Authorization
+
+
+2. Specify on the controllers if authentication is needed
+
+
+
             
