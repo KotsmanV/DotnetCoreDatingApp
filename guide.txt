@@ -198,5 +198,18 @@ ANGULAR SERVICES
 - providedIn: 'root' : declares that the service is available in the app.module
 
 
+DATA TRANSMISSION BETWEEN components
+1. Parent to child
+        i. Declare an @Input variable inside the child component
+        ii. Bind the variable to a parent function or variable with []
+            where the child is called
+            eg. [childProperty]="parentProperty"
+
+2. Child to parent
+        i.  Declare an @Output and initialize it as an EventEmitter() from '@angular/core'
+        ii. Specify a way to emit data to event, eg. a function that returns a value etc
+        iii.Bind on the child element call the output property to something from the parent component inside ()
+            eg. (childProperty)="ParentFunction(event)";
+        iv. Use the event inside the parent component
 
             
