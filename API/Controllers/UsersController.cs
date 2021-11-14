@@ -4,36 +4,43 @@ using System.Linq;
 using System.Threading.Tasks;
 using API.Data;
 using API.Entities;
+using API.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
+    [Authorize]
     public class UsersController : BaseApiController
     {
-        private readonly DataContext context;
-        public UsersController(DataContext context)
+        private readonly IUserRepository userRepository;
+        public UsersController(IUserRepository userRepository)
         {
-            this.context = context;
+            this.userRepository = userRepository;
         }
 
-        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
         {
-            var users = await context.Users.ToListAsync();
-            return users;    
+            var users = await userRepository.GetUsersAsync();
+            return Ok(users);
         }
 
-        //api/users/id
-        [Authorize]
-        [HttpGet("{id}")]
-        public async Task<ActionResult<AppUser>> GetUser(int? id)
+        ////api/users/id
+        //[HttpGet("{id}")]
+        //public async Task<ActionResult<AppUser>> GetUser(int id)
+        //{
+        //    var user = await userRepository.GetUserByIdAsync(id);
+        //    return user;
+        //}
+
+        //api/users/username
+        [HttpGet("{username}")]
+        public async Task<ActionResult<AppUser>> GetUser(string username)
         {
-            var user = await context.Users.FindAsync(id);
+            var user = await userRepository.GetUserByUsernameAsync(username);
             return user;
         }
-
     }
 }
