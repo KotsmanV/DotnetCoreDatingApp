@@ -22,6 +22,8 @@ namespace API.Extensions
             });
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IUserRepository, UserRepository>();
+            //The automapper needs the assemblies where the profiles will be
+            //Here we pass as a parameter the class and this assembly
             services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
             return services;
         }

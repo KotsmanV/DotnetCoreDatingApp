@@ -1,5 +1,7 @@
-﻿using API.Entities;
+﻿using API.DTOs;
+using API.Entities;
 using API.Interfaces;
+using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace API.Data
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository: IUserRepository
     {
         private readonly DataContext dbContext;
         public UserRepository(DataContext context)
@@ -22,12 +24,16 @@ namespace API.Data
 
         public async Task<AppUser> GetUserByUsernameAsync(string username)
         {
-            return await dbContext.Users.SingleOrDefaultAsync(u => u.UserName == username);
+            return await dbContext.Users
+                .Include(p => p.Photos)
+                .SingleOrDefaultAsync(u => u.UserName == username);
         }
 
         public async Task<IEnumerable<AppUser>> GetUsersAsync()
         {
-            return await dbContext.Users.ToListAsync();
+            return await dbContext.Users
+                .Include(p=>p.Photos)
+                .ToListAsync();
         }
 
         public async Task<bool> SaveAllAsync()
@@ -39,5 +45,18 @@ namespace API.Data
         {
             dbContext.Entry(user).State = EntityState.Modified;
         }
+
+        public async Task<MemberDto> GetMemberAsync(string username)
+        {
+            return await dbContext.Users
+                .Where(u => u.UserName == username)
+                .ProjectTo<MemberDto>()
+        }
+
+        public Task<IEnumerable<MemberDto>> GetMembersAsync()
+        {
+            throw new System.NotImplementedException();
+        }
+
     }
 }
