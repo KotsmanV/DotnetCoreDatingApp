@@ -62,7 +62,7 @@ namespace API.Data
         {
             return await dbContext.Users
                 .ProjectTo<MemberDto>(mapper.ConfigurationProvider)
-                .ToList();
+                .ToListAsync();
         }
 
     }
